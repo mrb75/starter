@@ -1,0 +1,17 @@
+[workspace]
+resolver = "3"
+members = ["base", "feature-rocket", "traits"]
+
+# Dual licensing configuration
+license = "Apache-2.0 OR Commercial"
+license-file = "LICENSE-COMMERCIAL"
+description = "A tool for generating production-ready boilerplate apps with security built-in"
+
+# Ensure both license files are included when publishing
+include = [
+    "src/**/*",
+    "LICENSE-APACHE",
+    "LICENSE-COMMERCIAL",
+    "README.md",
+    "Cargo.toml",
+]
