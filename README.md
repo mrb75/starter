@@ -1,4 +1,4 @@
-# MyCLI
+# Starter
 
 **Stop wasting hours setting up the same apps over and over.**
 

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["base", "feature-rocket", "traits"]
+members = ["base", "feature_nextjs", "feature_rocket", "shared"]
 
 # Dual licensing configuration
 license = "Apache-2.0 OR Commercial"
