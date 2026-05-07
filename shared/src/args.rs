@@ -35,15 +35,39 @@ pub struct BaseArgs {
 }
 
 // Custom parser for DatabaseConfig
-fn parse_database_config(_s: &str) -> Result<DatabaseConfig, String> {
+fn parse_database_config(s: &str) -> Result<DatabaseConfig, ValidationError> {
     // Your parsing logic here
     // Example: "postgres:primary" -> DatabaseConfig
+    let return_error = Err(ValidationError::InvalidField {
+        field: String::from("databases"),
+        value: String::from(s),
+        expected: String::from("database:usage"),
+    });
+    let mut parts = s.split(":");
+    let kind = match parts.next() {
+        Some(k) => match DatabaseKind::from_str(k) {
+            Some(kind_obj) => kind_obj,
+            None => return return_error,
+        },
+        None => {
+            return return_error;
+        }
+    };
+    let purpose = match parts.next() {
+        Some(p) => match DatabasePurpose::from_str(p) {
+            Some(purpose_obj) => purpose_obj,
+            None => return return_error,
+        },
+        None => {
+            return return_error;
+        }
+    };
     Ok(DatabaseConfig {
         db_type: DatabaseType {
-            kind: DatabaseKind::Postgres,
+            kind,
             version: None,
         },
-        purpose: DatabasePurpose::Primary,
+        purpose,
         custom_name: None,
     })
 }

@@ -38,6 +38,17 @@ impl DatabasePurpose {
             DatabasePurpose::Custom(s) => s,
         }
     }
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s.to_lowercase().as_str() {
+            "primary" => Some(DatabasePurpose::Primary),
+            "cache" => Some(DatabasePurpose::Cache),
+            "sessions" => Some(DatabasePurpose::Sessions),
+            "queue" => Some(DatabasePurpose::Queue),
+            "analytics" => Some(DatabasePurpose::Analytics),
+            "logging" => Some(DatabasePurpose::Logging),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
