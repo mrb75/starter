@@ -8,7 +8,7 @@ use shared::{StarterError, args::BaseArgs, generator::BoilerplateGenerator, vali
 use feature_rocket::{args::RocketArgs, generator::RocketGenerator};
 
 #[cfg(feature = "nextjs")]
-use feature_nextjs::generator::{NextJsArgs, NextJsGenerator};
+use feature_nextjs::{args::NextJsArgs, generator::NextJsGenerator};
 
 // #[cfg(feature = "dioxus")]
 // use feature_dioxus::{DioxusArgs, DioxusGenerator};

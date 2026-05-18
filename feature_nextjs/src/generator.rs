@@ -1,39 +1,11 @@
 use shared::{
-    args::BaseArgs,
     generator::{BoilerplateGenerator, Feature},
     io::{IoError, IoResult},
     types::{AuthType, DatabaseKind, DatabaseType},
-    validation::{Valid, ValidationError},
+    validation::{ValidationError},
 };
+use super::args::NextJsArgs;
 use std::path::PathBuf;
-
-#[derive(Debug, Clone)]
-pub struct NextJsArgs {
-    pub base: BaseArgs, // ← Same base, different extensions
-
-    // Next.js-specific
-    pub port: u16,
-    pub turbopack: bool,
-    pub experimental: bool,
-    pub app_dir: bool, // App router vs pages router
-}
-
-impl Valid for NextJsArgs {
-    fn validate(&self) -> Result<(), ValidationError> {
-        self.base.validate()?;
-
-        if self.port == 0 {
-            return Err(ValidationError::OutOfRange {
-                field: "port".to_string(),
-                value: self.port.to_string(),
-                min: "1".to_string(),
-                max: "65535".to_string(),
-            });
-        }
-
-        Ok(())
-    }
-}
 
 pub struct NextJsGenerator;
 
