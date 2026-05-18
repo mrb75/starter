@@ -50,6 +50,12 @@ impl BoilerplateGenerator for NextJsGenerator {
             .base
             .output_path
             .join(args.base.project_name.to_string());
+
+        std::fs::create_dir_all(&project_directory).map_err(|e| IoError::CreateDir {
+            path: project_directory.clone(),
+            source: e,
+        })?;
+
         // Use create-next-app internally
         let status = std::process::Command::new("npx")
             .arg("create-next-app@latest")

@@ -7,8 +7,8 @@ use shared::{StarterError, args::BaseArgs, generator::BoilerplateGenerator, vali
 #[cfg(feature = "rocket")]
 use feature_rocket::{args::RocketArgs, generator::RocketGenerator};
 
-// #[cfg(feature = "nextjs")]
-// use feature_nextjs::{NextJsArgs, NextJsGenerator};
+#[cfg(feature = "nextjs")]
+use feature_nextjs::generator::{NextJsArgs, NextJsGenerator};
 
 // #[cfg(feature = "dioxus")]
 // use feature_dioxus::{DioxusArgs, DioxusGenerator};
@@ -37,18 +37,18 @@ enum Commands {
         host: Option<String>,
     },
 
-    /// Generate a Next.js project
-    // #[cfg(feature = "nextjs")]
-    // NextJs {
-    //     #[clap(flatten)]
-    //     base: BaseArgs,
+    // Generate a Next.js project
+    #[cfg(feature = "nextjs")]
+    NextJs {
+        #[clap(flatten)]
+        base: BaseArgs,
 
-    //     #[arg(long, default_value = "3000")]
-    //     port: u16,
+        #[arg(long, default_value = "3000")]
+        port: u16,
 
-    //     #[arg(long)]
-    //     turbopack: bool,
-    // },
+        #[arg(long)]
+        turbopack: bool,
+    },
 
     /// Generate a Dioxus project
     // #[cfg(feature = "dioxus")]
@@ -105,31 +105,31 @@ async fn main() -> anyhow::Result<()> {
             println!("   cargo run");
         }
 
-        // #[cfg(feature = "nextjs")]
-        // Commands::NextJs {
-        //     base,
-        //     port,
-        //     turbopack,
-        // } => {
-        //     let args = NextJsArgs {
-        //         base,
-        //         port,
-        //         turbopack,
-        //         experimental: false,
-        //         app_dir: true,
-        //     };
+        #[cfg(feature = "nextjs")]
+        Commands::NextJs {
+            base,
+            port,
+            turbopack,
+        } => {
+            let args = NextJsArgs {
+                base,
+                port,
+                turbopack,
+                experimental: false,
+                app_dir: true,
+            };
 
-        //     let generator = NextJsGenerator;
-        //     let project_path = std::path::PathBuf::from(&args.base.project_name);
+            let generator = NextJsGenerator;
+            // let project_path = std::path::PathBuf::from(&args.base.project_name);
 
-        //     println!("📦 Generating Next.js project: {}", args.base.project_name);
+            println!("📦 Generating Next.js project: {}", args.base.project_name);
 
-        //     generator.generate(&args, &project_path)?;
+            generator.generate(&args)?;
 
-        //     println!("✅ Next.js project generated successfully!");
-        //     println!("   cd {}", args.base.project_name);
-        //     println!("   npm run dev");
-        // }
+            println!("✅ Next.js project generated successfully!");
+            println!("   cd {}", args.base.project_name);
+            println!("   npm run dev");
+        }
 
         // #[cfg(feature = "dioxus")]
         // Commands::Dioxus { base, platform } => {
@@ -161,8 +161,8 @@ async fn main() -> anyhow::Result<()> {
             println!("Available frameworks:");
             #[cfg(feature = "rocket")]
             println!("  - rocket");
-            // #[cfg(feature = "nextjs")]
-            // println!("  - nextjs");
+            #[cfg(feature = "nextjs")]
+            println!("  - nextjs");
             // #[cfg(feature = "dioxus")]
             // println!("  - dioxus");
 
