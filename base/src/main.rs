@@ -94,7 +94,7 @@ async fn main() -> anyhow::Result<()> {
 
             println!("🚀 Generating Rocket project: {}", args.base.project_name);
 
-            if let Err(e) = generator.generate(&args, &project_path) {
+            if let Err(e) = generator.generate(&args) {
                 eprintln!("❌ Generation failed: {}", e);
                 generator.cleanup_on_error(&project_path)?;
                 std::process::exit(1);

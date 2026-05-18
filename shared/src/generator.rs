@@ -16,7 +16,7 @@ pub trait BoilerplateGenerator {
     fn name(&self) -> &'static str;
 
     /// Generate the boilerplate project
-    fn generate(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()>;
+    fn generate(&self, args: &Self::Args) -> IoResult<()>;
 
     /// Validate arguments before generation (optional, default uses Args::validate)
     fn validate(&self, args: &Self::Args) -> Result<(), ValidationError> {
@@ -50,18 +50,6 @@ pub trait BoilerplateGenerator {
     fn required_dependencies(&self) -> Vec<String> {
         vec![] // Default: none
     }
-
-    // /// Generate main.rs file
-    // fn generate_main_rs(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()>;
-
-    // /// Generate Rocket.toml file
-    // fn generate_rocket_config(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()>;
-
-    // /// setup databses for project
-    // fn setup_database(&self, config: &DatabaseConfig, project_path: &PathBuf) -> IoResult<()>;
-
-    // /// setup auth mrthod for project
-    // fn setup_auth(&self, auth: &AuthType, project_path: &PathBuf) -> IoResult<()>;
 }
 
 /// Features that a framework might support

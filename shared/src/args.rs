@@ -134,22 +134,22 @@ impl BaseArgs {
             });
         }
 
-        if !self.force && self.output_path.exists() {
-            // Check if directory exists and not empty
-            if self
-                .output_path
-                .read_dir()
-                .ok()
-                .map(|mut d| d.next().is_some())
-                .unwrap_or(false)
-            {
-                return Err(ValidationError::InvalidField {
-                    field: "output_path".to_string(),
-                    value: self.output_path.display().to_string(),
-                    expected: "empty or non-existent directory".to_string(),
-                });
-            }
-        }
+        // if !self.force && self.output_path.exists() {
+        //     // Check if directory exists and not empty
+        //     if self
+        //         .output_path
+        //         .read_dir()
+        //         .ok()
+        //         .map(|mut d| d.next().is_some())
+        //         .unwrap_or(false)
+        //     {
+        //         return Err(ValidationError::InvalidField {
+        //             field: "output_path".to_string(),
+        //             value: self.output_path.display().to_string(),
+        //             expected: "empty or non-existent directory".to_string(),
+        //         });
+        //     }
+        // }
 
         Ok(())
     }

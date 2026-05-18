@@ -16,23 +16,35 @@ impl BoilerplateGenerator for RocketGenerator {
         "Rocket"
     }
 
-    fn generate(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()> {
+    fn generate(&self, args: &Self::Args) -> IoResult<()> {
         println!("🚀 Generating Rocket project: {}", args.base.project_name);
 
         // Create project directory
-        std::fs::create_dir_all(project_path).map_err(|e| IoError::CreateDir {
-            path: project_path.clone(),
+        let project_directory = args
+            .base
+            .output_path
+            .join(args.base.project_name.to_string());
+        std::fs::create_dir_all(&project_directory).map_err(|e| IoError::CreateDir {
+            path: project_directory.clone(),
             source: e,
         })?;
+        std::process::Command::new("cargo")
+            .arg("init")
+            .current_dir(&project_directory)
+            .status()
+            .map_err(|e| IoError::CommandFailed {
+                command: "cargo init".to_string(),
+                source: e,
+            })?;
 
         // Generate Cargo.toml
-        self.generate_cargo_toml(args, project_path)?;
+        self.generate_cargo_toml(args, &project_directory)?;
 
-        // // Generate main.rs
-        // self.generate_main_rs(args, project_path)?;
+        // Generate main.rs
+        self.generate_main_rs(args, &project_directory)?;
 
-        // // Generate Rocket.toml config
-        // self.generate_rocket_config(args, project_path)?;
+        // Generate Rocket.toml config
+        self.generate_rocket_config(args, &project_directory)?;
 
         // // Setup database if requested
         // // if let Some(db) = &args.base.databases {
@@ -65,12 +77,13 @@ impl BoilerplateGenerator for RocketGenerator {
         args.base.validate()
     }
 
-    fn post_generate(&self, _args: &Self::Args, project_path: &PathBuf) -> IoResult<()> {
+    fn post_generate(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()> {
         println!("📦 Installing dependencies...");
 
         // Run cargo init
+        let project_directory = args.base.output_path.join(project_path);
         let status = std::process::Command::new("cargo")
-            .current_dir(project_path)
+            .current_dir(project_directory)
             .status()
             .map_err(|e| IoError::CommandFailed {
                 command: "cargo build".to_string(),
@@ -118,10 +131,10 @@ impl RocketGenerator {
             r#"[package]
 name = "{}"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-rocket = "0.5.0"
+rocket = "0.5.1"
 tokio = {{ version = "1", features = ["full"] }}
 serde = {{ version = "1", features = ["derive"] }}
 "#,
@@ -137,5 +150,42 @@ serde = {{ version = "1", features = ["derive"] }}
         Ok(())
     }
 
-    // ... other helper methods
+    fn generate_main_rs(&self, _args: &RocketArgs, path: &PathBuf) -> IoResult<()> {
+        let content = "
+            #[macro_use] extern crate rocket;
+
+            #[get('/<name>/<age>')]
+            fn hello(name: &str, age: u8) -> String {
+                format!('Hello, {} year old named {}!', age, name)
+            }
+
+            #[launch]
+            fn rocket() -> _ {
+                rocket::build().mount('/hello', routes![hello])
+            }
+        ";
+        let main_rs_path = path.join("src/main.rs");
+        std::fs::write(&main_rs_path, content).map_err(|e| IoError::WriteFile {
+            path: main_rs_path,
+            source: e,
+        })?;
+
+        Ok(())
+    }
+    fn generate_rocket_config(&self, _args: &RocketArgs, path: &PathBuf) -> IoResult<()> {
+        let content = format!(
+            r#"
+            [default]
+            address = "0.0.0.0"
+"#,
+        );
+
+        let rocket_toml_path = path.join("Rocket.toml");
+        std::fs::write(&rocket_toml_path, content).map_err(|e| IoError::WriteFile {
+            path: rocket_toml_path,
+            source: e,
+        })?;
+
+        Ok(())
+    }
 }

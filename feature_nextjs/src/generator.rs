@@ -44,9 +44,12 @@ impl BoilerplateGenerator for NextJsGenerator {
         "Next.js"
     }
 
-    fn generate(&self, args: &Self::Args, project_path: &PathBuf) -> IoResult<()> {
+    fn generate(&self, args: &Self::Args) -> IoResult<()> {
         println!("📦 Generating Next.js project: {}", args.base.project_name);
-
+        let project_directory = args
+            .base
+            .output_path
+            .join(args.base.project_name.to_string());
         // Use create-next-app internally
         let status = std::process::Command::new("npx")
             .arg("create-next-app@latest")
@@ -57,7 +60,7 @@ impl BoilerplateGenerator for NextJsGenerator {
             } else {
                 "--no-turbopack"
             })
-            .current_dir(project_path.parent().unwrap_or(&PathBuf::from(".")))
+            .current_dir(project_directory.parent().unwrap_or(&PathBuf::from(".")))
             .status()
             .map_err(|e| IoError::CommandFailed {
                 command: "create-next-app".to_string(),
